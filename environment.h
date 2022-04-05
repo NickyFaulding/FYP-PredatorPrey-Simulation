@@ -17,8 +17,8 @@ private:
     int foodCount;
     int predatorCount;
 
-    // int preyLimit;
-    // int preadtorLimit;
+    int preyLimit;
+    int predatorLimit;
     int foodLimit;
 
     float timePassed;
@@ -35,11 +35,11 @@ private:
 
 public:
     Environment();
-    Environment(int preyCount, int predatorCount, int foodCount, int foodLimit); // allow creating an environment without changing the class.
+    Environment(int preyCount, int predatorCount, int foodCount, int foodLimit, int preyLimit, int predatorLimit); // allow creating an environment without changing the class.
 
     void addFood();
     void addFood(int n);
-    void addPredator(); 
+    void addPredator();
     void addPredator(int n);
     void addPrey();
     void addPrey(int n);

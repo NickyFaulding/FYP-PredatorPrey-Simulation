@@ -26,7 +26,7 @@ int screenHeight = 900;
 
 int predatorCount;
 int preyCount;
-int foodCount = 1; //change
+int foodCount = 1; // change
 
 int predatorLimit;
 int preyLimit;
@@ -34,6 +34,7 @@ int foodLimit;
 
 bool dividebyfour;
 bool disablePreyLimit;
+bool disablePredatorLimit;
 
 std::vector<std::string> gPredatorData;
 std::vector<std::string> gPreyData;
@@ -64,6 +65,7 @@ int main()
 
     dividebyfour = false;
     disablePreyLimit = false;
+    disablePredatorLimit = false;
 
     // EM_ASM(
     //     saveFileFromMEMFSToDisk()
@@ -86,12 +88,13 @@ void UpdateDrawFrame(void)
     case INITIAL:
         BeginDrawing();
 
-        dividebyfour = GuiCheckBox((Rectangle){1000, 300, 30, 30}, "RATIO PREDATOR PREY 1:4!", dividebyfour);
+        dividebyfour = GuiCheckBox((Rectangle){1000, 260, 30, 30}, "RATIO PREDATOR PREY 1:4!", dividebyfour);
+        disablePredatorLimit = GuiCheckBox((Rectangle){1000, 300, 30, 30}, "NO PREDATOR LIMIT", disablePredatorLimit);
         disablePreyLimit = GuiCheckBox((Rectangle){1000, 340, 30, 30}, "NO PREY LIMIT", disablePreyLimit);
 
-        if (!dividebyfour)
+        if (!disablePredatorLimit)
         {
-            predatorLimit = GuiSlider((Rectangle){1000, 380, 200, 40}, "PREDATOR LIMIT", TextFormat("%2.2f", (float)predatorLimit), predatorLimit, predatorCount, 100);
+            predatorLimit = GuiSlider((Rectangle){1000, 380, 200, 40}, "PREDATOR LIMIT", TextFormat("%2.2f", (float)predatorLimit), predatorLimit, predatorCount, 200);
         }
         if (!disablePreyLimit)
         {
@@ -102,11 +105,15 @@ void UpdateDrawFrame(void)
 
         if (dividebyfour)
         {
-            predatorLimit = preyLimit / 4;
+            predatorLimit = 444;
         }
         if (disablePreyLimit)
         {
             preyLimit = 999;
+        }
+        if (disablePredatorLimit)
+        {
+            predatorLimit = 999;
         }
 
         predatorCount = GuiSlider((Rectangle){355, 380, 200, 40}, "STARTING PREDATORS", TextFormat("%2.2f", (float)predatorCount), predatorCount, 0, 100);
@@ -115,7 +122,7 @@ void UpdateDrawFrame(void)
 
         if (GuiButton((Rectangle){355, 550, 200, 40}, "START SIMULATION"))
         {
-            environment = new Environment(preyCount, predatorCount, foodCount, foodLimit);
+            environment = new Environment(preyCount, predatorCount, foodCount, foodLimit, preyLimit, predatorLimit);
             currentScreen = SIMULATION;
         }
 

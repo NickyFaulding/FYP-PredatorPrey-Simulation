@@ -11,7 +11,18 @@ Environment::Environment()
     addFood(foodCount);
 }
 
-Environment::Environment(int preyCount, int predatorCount, int foodCount, int foodLimit) : preyCount(preyCount), foodCount(foodCount), foodLimit(foodLimit), predatorCount(predatorCount)
+Environment::Environment(
+    int preyCount,
+    int predatorCount,
+    int foodCount,
+    int foodLimit,
+    int preyLimit,
+    int predatorLimit) : preyCount(preyCount),
+                         foodCount(foodCount),
+                         foodLimit(foodLimit),
+                         preyLimit(preyLimit),
+                         predatorLimit(predatorLimit),
+                         predatorCount(predatorCount)
 {
     addPrey(preyCount);
     addPredator(predatorCount);
@@ -22,7 +33,8 @@ struct UpdatePrey // functor
 {
     UpdatePrey(std::vector<Predator> &predators,
                std::vector<Food> &allFood,
-               std::vector<Prey> &allPrey) : predators(predators), allPrey(allPrey), allFood(allFood) {}
+               std::vector<Prey> &allPrey,
+               int preyLimit) : predators(predators), allPrey(allPrey), allFood(allFood), preyLimit(preyLimit) {}
 
     void operator()(Prey &p)
     {
@@ -132,28 +144,36 @@ struct UpdatePrey // functor
 
     void addPrey(int n)
     {
-        for (int i = 0; i < n; ++i)
+        if (allPrey.size() < preyLimit)
         {
-            allPrey.push_back(Prey());
+            for (int i = 0; i < n; ++i)
+            {
+                allPrey.push_back(Prey());
+            }
         }
     }
 
     std::vector<Predator> &predators;
     std::vector<Prey> &allPrey;
     std::vector<Food> &allFood;
+    int preyLimit;
 };
 
 struct UpdatePredator // functor
 {
-    UpdatePredator(std::vector<Prey> &allPrey, std::vector<Predator> &predators) : allPrey(allPrey), predators(predators) {}
+    UpdatePredator(std::vector<Prey> &allPrey, std::vector<Predator> &predators, int predatorLimit) : allPrey(allPrey), predators(predators), predatorLimit(predatorLimit) {}
 
     void operator()(Predator &p)
     {
         decideHungerLevels(p); // experimental
+        if (predatorLimit == 444)
+        {
+            predatorLimit = predators.size() < allPrey.size() / 4;
+        }
 
         if (p.isAlive())
         {
-            if (allPrey.size() > 0 && p.isHungry()) // there are prey
+            if ((allPrey.size() > 0) && p.isHungry() && (predators.size() < predatorLimit)) // there are prey
             {
                 const Prey &nearestPrey = findNearestPrey(p);
 
@@ -167,11 +187,8 @@ struct UpdatePredator // functor
 
                 if (p.getCreateNewAnimal())
                 {
-                    if (predators.size() < allPrey.size() / 4)
-                    {
-                        p.newAnimalCreated();
-                        addPredator(1); // new predator made
-                    }
+                    p.newAnimalCreated();
+                    addPredator(1); // new predator made
                 }
             }
             else
@@ -247,13 +264,14 @@ struct UpdatePredator // functor
 
     std::vector<Prey> &allPrey;
     std::vector<Predator> &predators;
+    int predatorLimit;
 };
 
 void Environment::update()
 {
     // using member pointers here
-    std::for_each(predators.begin(), predators.end(), UpdatePredator(allPrey, predators));
-    std::for_each(allPrey.begin(), allPrey.end(), UpdatePrey(predators, allFood, allPrey));
+    std::for_each(predators.begin(), predators.end(), UpdatePredator(allPrey, predators, predatorLimit));
+    std::for_each(allPrey.begin(), allPrey.end(), UpdatePrey(predators, allFood, allPrey, preyLimit));
 
     if ((getTimePassed() % 100) == 0) // limit amount we push to the vector.
     {
