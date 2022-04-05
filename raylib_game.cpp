@@ -7,6 +7,8 @@
 
 #include <iostream>
 #include <fstream>
+#include <vector>
+#include <string>
 
 //----------------------------------------------------------------------------------
 // Global Variables Definition
@@ -33,6 +35,10 @@ int foodLimit;
 bool dividebyfour;
 bool disablePreyLimit;
 
+std::vector<std::string> gPredatorData;
+std::vector<std::string> gPreyData;
+bool dataWritten;
+
 // look into using smart pointers garbage collection.
 Environment *environment;
 
@@ -42,9 +48,11 @@ void write(std::vector<std::string> v);
 int main()
 {
     // Initialization
+
     InitWindow(screenWidth, screenHeight, "Raylib Predator Prey Simulation.");
 
     currentScreen = INITIAL;
+    dataWritten = false;
 
     predatorCount = 0;
     preyCount = 0;
@@ -77,22 +85,20 @@ void UpdateDrawFrame(void)
     {
     case INITIAL:
         BeginDrawing();
-        predatorCount = GuiSlider((Rectangle){355, 400, 165, 20}, "PREDATOR COUNT", TextFormat("%2.2f", (float)predatorCount), predatorCount, 0, 100);
-        preyCount = GuiSlider((Rectangle){355, 420, 165, 20}, "PREY COUNT", TextFormat("%2.2f", (float)preyCount), preyCount, 0, 500);
-        foodCount = GuiSlider((Rectangle){355, 440, 165, 20}, "FOOD COUNT", TextFormat("%2.2f", (float)foodCount), foodCount, 0, 500);
 
-        dividebyfour = GuiCheckBox((Rectangle){355, 180, 15, 15}, "RATIO PREDATOR PREY 1:4!", dividebyfour);
-        disablePreyLimit = GuiCheckBox((Rectangle){355, 200, 15, 15}, "NO PREY LIMIT", disablePreyLimit);
+        dividebyfour = GuiCheckBox((Rectangle){355, 150, 30, 30}, "RATIO PREDATOR PREY 1:4!", dividebyfour);
+        disablePreyLimit = GuiCheckBox((Rectangle){355, 185, 30, 30}, "NO PREY LIMIT", disablePreyLimit);
+
         if (!dividebyfour)
         {
-            predatorLimit = GuiSlider((Rectangle){355, 220, 165, 20}, "PREDATOR LIMIT", TextFormat("%2.2f", (float)predatorLimit), predatorLimit, predatorCount, 100);
+            predatorLimit = GuiSlider((Rectangle){355, 230, 200, 40}, "PREDATOR LIMIT", TextFormat("%2.2f", (float)predatorLimit), predatorLimit, predatorCount, 100);
         }
         if (!disablePreyLimit)
         {
-            preyLimit = GuiSlider((Rectangle){355, 240, 165, 20}, "PREY LIMIT", TextFormat("%2.2f", (float)preyLimit), preyLimit, preyCount, 500);
+            preyLimit = GuiSlider((Rectangle){355, 280, 200, 40}, "PREY LIMIT", TextFormat("%2.2f", (float)preyLimit), preyLimit, preyCount, 500);
         }
 
-        foodLimit = GuiSlider((Rectangle){355, 260, 165, 20}, "FOOD LIMIT", TextFormat("%2.2f", (float)foodLimit), foodLimit, foodCount, 500);
+        foodLimit = GuiSlider((Rectangle){355, 330, 200, 40}, "FOOD LIMIT", TextFormat("%2.2f", (float)foodLimit), foodLimit, foodCount, 500);
 
         if (dividebyfour)
         {
@@ -103,10 +109,25 @@ void UpdateDrawFrame(void)
             preyLimit = 999;
         }
 
-        if (GuiButton((Rectangle){355, 470, 165, 20}, "START SIMULATION"))
+        predatorCount = GuiSlider((Rectangle){355, 380, 200, 40}, "PREDATOR COUNT", TextFormat("%2.2f", (float)predatorCount), predatorCount, 0, 100);
+        preyCount = GuiSlider((Rectangle){355, 430, 200, 40}, "PREY COUNT", TextFormat("%2.2f", (float)preyCount), preyCount, 0, 500);
+        foodCount = GuiSlider((Rectangle){355, 480, 200, 40}, "FOOD COUNT", TextFormat("%2.2f", (float)foodCount), foodCount, 0, 500);
+
+        if (GuiButton((Rectangle){355, 550, 200, 40}, "START SIMULATION"))
         {
             environment = new Environment(preyCount, predatorCount, foodCount);
             currentScreen = SIMULATION;
+        }
+
+        if (dataWritten)
+        {
+            if (GuiButton((Rectangle){655, 550, 300, 40}, "DOWNLOAD SIM DATA"))
+            {
+                write(gPredatorData);
+                emscripten_run_script(TextFormat("saveFileFromMEMFSToDisk('%s','%s')", "text.txt", "predatorData.txt"));
+                write(gPreyData);
+                emscripten_run_script(TextFormat("saveFileFromMEMFSToDisk('%s','%s')", "text.txt", "preyData.txt"));
+            }
         }
 
         EndDrawing();
@@ -122,12 +143,11 @@ void UpdateDrawFrame(void)
         environment->draw();
         environment->drawDebugData();
 
-        if (GuiButton((Rectangle){50, 630, 130, 20}, "STOP SIMULATION"))
+        if (GuiButton((Rectangle){50, 630, 200, 40}, "STOP SIMULATION"))
         {
-            write(environment->getPredatorData());
-            emscripten_run_script(TextFormat("saveFileFromMEMFSToDisk('%s','%s')", "text.txt", "predatorData.txt"));
-            write(environment->getPreyData());
-            emscripten_run_script(TextFormat("saveFileFromMEMFSToDisk('%s','%s')", "text.txt", "preyData.txt"));
+            gPredatorData = environment->getPredatorData();
+            gPreyData = environment->getPreyData();
+            dataWritten = true;
 
             currentScreen = INITIAL;
         }
