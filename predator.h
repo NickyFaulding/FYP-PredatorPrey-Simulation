@@ -22,6 +22,7 @@ public:
     void decreaseMaxHunger();
     void increaseMaxHunger();
     void normalMaxHunger();
+    void randomAging();
     void draw();
 };
 

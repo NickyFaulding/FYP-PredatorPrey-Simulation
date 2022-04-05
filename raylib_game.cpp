@@ -105,7 +105,7 @@ void UpdateDrawFrame(void)
 
         if (dividebyfour)
         {
-            predatorLimit = 444;
+            predatorLimit = preyLimit / 4;
         }
         if (disablePreyLimit)
         {

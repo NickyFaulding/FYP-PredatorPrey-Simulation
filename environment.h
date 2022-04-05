@@ -21,6 +21,8 @@ private:
     int predatorLimit;
     int foodLimit;
 
+    bool ratioed;
+
     float timePassed;
 
     const int SIZE = 20;

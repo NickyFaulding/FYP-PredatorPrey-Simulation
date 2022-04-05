@@ -27,6 +27,11 @@ Environment::Environment(
     addPrey(preyCount);
     addPredator(predatorCount);
     addFood(foodCount);
+
+    if (predatorLimit == 444)
+    {
+        ratioed = true;
+    }
 }
 
 struct UpdatePrey // functor
@@ -161,15 +166,13 @@ struct UpdatePrey // functor
 
 struct UpdatePredator // functor
 {
-    UpdatePredator(std::vector<Prey> &allPrey, std::vector<Predator> &predators, int predatorLimit) : allPrey(allPrey), predators(predators), predatorLimit(predatorLimit) {}
+    UpdatePredator(std::vector<Prey> &allPrey, std::vector<Predator> &predators, int predatorLimit) : allPrey(allPrey), predators(predators), predatorLimit(predatorLimit)
+    {
+    }
 
     void operator()(Predator &p)
     {
         decideHungerLevels(p); // experimental
-        if (predatorLimit == 444)
-        {
-            predatorLimit = predators.size() < allPrey.size() / 4;
-        }
 
         if (p.isAlive())
         {
@@ -181,6 +184,7 @@ struct UpdatePredator // functor
 
                 if (Vector2Distance(p.getPos(), nearestPrey.getPos()) < 3)
                 {
+
                     p.eat();
                     removeSpecificPrey(nearestPrey);
                 }
@@ -265,6 +269,7 @@ struct UpdatePredator // functor
     std::vector<Prey> &allPrey;
     std::vector<Predator> &predators;
     int predatorLimit;
+    bool ratioed = false;
 };
 
 void Environment::update()

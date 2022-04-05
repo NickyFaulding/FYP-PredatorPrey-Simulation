@@ -5,6 +5,7 @@ Predator::Predator()
     position = randomHole();
     velocity = {RandomNumberGenerator(-1, 1), RandomNumberGenerator(-1, 1)}; // random velocity when born
     maxAge = 150;
+    age = (RandomNumberGenerator(0, 25));
     colour = RED;
     size = 3;
     maxSpeed = 3;
