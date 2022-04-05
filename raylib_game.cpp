@@ -109,8 +109,8 @@ void UpdateDrawFrame(void)
             preyLimit = 999;
         }
 
-        predatorCount = GuiSlider((Rectangle){355, 380, 200, 40}, "PREDATOR COUNT", TextFormat("%2.2f", (float)predatorCount), predatorCount, 0, 100);
-        preyCount = GuiSlider((Rectangle){355, 430, 200, 40}, "PREY COUNT", TextFormat("%2.2f", (float)preyCount), preyCount, 0, 500);
+        predatorCount = GuiSlider((Rectangle){355, 380, 200, 40}, "STARTING PREDATORS", TextFormat("%2.2f", (float)predatorCount), predatorCount, 0, 100);
+        preyCount = GuiSlider((Rectangle){355, 430, 200, 40}, "STARTING PREY", TextFormat("%2.2f", (float)preyCount), preyCount, 0, 500);
         // foodCount = GuiSlider((Rectangle){355, 480, 200, 40}, "FOOD COUNT", TextFormat("%2.2f", (float)foodCount), foodCount, 0, 500);
 
         if (GuiButton((Rectangle){355, 550, 200, 40}, "START SIMULATION"))
