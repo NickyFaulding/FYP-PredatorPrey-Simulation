@@ -36,7 +36,6 @@ protected:
     void increaseAge();
     void updateHunger();
     void seek(Vector2 target);
-    void wander();
     void updatePosition();
     void adjustPosition();
     Vector2 steer(Vector2 desired);
@@ -50,6 +49,7 @@ public:
     virtual void eat() = 0;
     void death();
 
+    void wander();
     bool isAlive() const;
     bool isHungry() const;
     Vector2 const getPos() const;

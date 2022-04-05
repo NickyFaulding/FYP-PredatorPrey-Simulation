@@ -11,7 +11,7 @@ Environment::Environment()
     addFood(foodCount);
 }
 
-Environment::Environment(int preyCount, int predatorCount, int foodCount) : preyCount(preyCount), foodCount(foodCount), predatorCount(predatorCount)
+Environment::Environment(int preyCount, int predatorCount, int foodCount, int foodLimit) : preyCount(preyCount), foodCount(foodCount), foodLimit(foodLimit), predatorCount(predatorCount)
 {
     addPrey(preyCount);
     addPredator(predatorCount);
@@ -55,7 +55,7 @@ struct UpdatePrey // functor
                 p.move(nearestP.getPos(), nearestP.getVel(), findNeighbours(p));
             }
         }
-        else if (p.isAlive()) // there's only food. this should not happen but just in case...
+        else if (p.isAlive() && allFood.size() > 0) // there's only food. this should not happen but just in case...
         {
             const Food &nearestF = findNearestFood(p);
 
@@ -72,6 +72,10 @@ struct UpdatePrey // functor
                 p.newAnimalCreated();
                 addPrey(GetRandomValue(1, 2)); // create 1-2 children.
             }
+        }
+        else // no food, no prey
+        {
+            p.move(findNeighbours(p));
         }
     }
 
@@ -257,7 +261,7 @@ void Environment::update()
         preyData.push_back(std::to_string(allPrey.size()));
     }
 
-    if (allFood.size() < foodLimit)
+    if ((foodLimit - allFood.size()) > 0)
     {
         spawnRandomAmountOfFood();
     }
@@ -369,7 +373,7 @@ void Environment::removeDead()
 
 void Environment::spawnRandomAmountOfFood()
 {
-    addFood(GetRandomValue(0, foodCount));
+    addFood(GetRandomValue(0, (foodLimit - allFood.size())));
 }
 
 int Environment::getTimePassed()

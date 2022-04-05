@@ -115,20 +115,20 @@ void UpdateDrawFrame(void)
 
         if (GuiButton((Rectangle){355, 550, 200, 40}, "START SIMULATION"))
         {
-            environment = new Environment(preyCount, predatorCount, foodCount);
+            environment = new Environment(preyCount, predatorCount, foodCount, foodLimit);
             currentScreen = SIMULATION;
         }
 
         DrawText("PREDATOR-PREY SIMULATION", 355, 150, 25, RAYWHITE);
 
         DrawText("PREDATOR", 375, 280, 20, RAYWHITE);
-                  DrawCircle(365, 287, 5, RED);
+        DrawCircle(365, 287, 5, RED);
 
         DrawText("PREY", 375, 300, 20, RAYWHITE);
-              DrawCircle(365, 307, 5, WHITE);
+        DrawCircle(365, 307, 5, WHITE);
 
         DrawText("FOOD", 375, 320, 20, RAYWHITE);
-              DrawCircle(365, 327, 5, ORANGE);
+        DrawCircle(365, 327, 5, ORANGE);
 
         if (dataWritten)
         {
