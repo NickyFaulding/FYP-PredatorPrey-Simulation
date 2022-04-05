@@ -86,19 +86,19 @@ void UpdateDrawFrame(void)
     case INITIAL:
         BeginDrawing();
 
-        dividebyfour = GuiCheckBox((Rectangle){355, 150, 30, 30}, "RATIO PREDATOR PREY 1:4!", dividebyfour);
-        disablePreyLimit = GuiCheckBox((Rectangle){355, 185, 30, 30}, "NO PREY LIMIT", disablePreyLimit);
+        dividebyfour = GuiCheckBox((Rectangle){1000, 300, 30, 30}, "RATIO PREDATOR PREY 1:4!", dividebyfour);
+        disablePreyLimit = GuiCheckBox((Rectangle){1000, 340, 30, 30}, "NO PREY LIMIT", disablePreyLimit);
 
         if (!dividebyfour)
         {
-            predatorLimit = GuiSlider((Rectangle){355, 230, 200, 40}, "PREDATOR LIMIT", TextFormat("%2.2f", (float)predatorLimit), predatorLimit, predatorCount, 100);
+            predatorLimit = GuiSlider((Rectangle){1000, 380, 200, 40}, "PREDATOR LIMIT", TextFormat("%2.2f", (float)predatorLimit), predatorLimit, predatorCount, 100);
         }
         if (!disablePreyLimit)
         {
-            preyLimit = GuiSlider((Rectangle){355, 280, 200, 40}, "PREY LIMIT", TextFormat("%2.2f", (float)preyLimit), preyLimit, preyCount, 500);
+            preyLimit = GuiSlider((Rectangle){1000, 430, 200, 40}, "PREY LIMIT", TextFormat("%2.2f", (float)preyLimit), preyLimit, preyCount, 500);
         }
 
-        foodLimit = GuiSlider((Rectangle){355, 330, 200, 40}, "FOOD LIMIT", TextFormat("%2.2f", (float)foodLimit), foodLimit, foodCount, 500);
+        foodLimit = GuiSlider((Rectangle){1000, 480, 200, 40}, "FOOD LIMIT", TextFormat("%2.2f", (float)foodLimit), foodLimit, foodCount, 500);
 
         if (dividebyfour)
         {
@@ -119,9 +119,20 @@ void UpdateDrawFrame(void)
             currentScreen = SIMULATION;
         }
 
+        DrawText("PREDATOR-PREY SIMULATION", 355, 150, 25, RAYWHITE);
+
+        DrawText("PREDATOR", 375, 280, 20, RAYWHITE);
+                  DrawCircle(365, 287, 5, RED);
+
+        DrawText("PREY", 375, 300, 20, RAYWHITE);
+              DrawCircle(365, 307, 5, WHITE);
+
+        DrawText("FOOD", 375, 320, 20, RAYWHITE);
+              DrawCircle(365, 327, 5, ORANGE);
+
         if (dataWritten)
         {
-            if (GuiButton((Rectangle){655, 550, 300, 40}, "DOWNLOAD SIM DATA"))
+            if (GuiButton((Rectangle){355, 600, 300, 40}, "DOWNLOAD SIM DATA"))
             {
                 write(gPredatorData);
                 emscripten_run_script(TextFormat("saveFileFromMEMFSToDisk('%s','%s')", "text.txt", "predatorData.txt"));

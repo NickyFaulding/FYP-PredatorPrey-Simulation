@@ -180,7 +180,7 @@ endif
 
 # Define compiler flags: CFLAGS
 #------------------------------------------------------------------------------------------------
-#  -O1                  defines optimization level
+#  -O1                  defines optimization level test
 #  -g                   include debug information on compilation
 #  -s                   strip unnecessary data from build
 #  -Wall                turns on most, but not all, compiler warnings
