@@ -1,87 +1,128 @@
-#include "raylib.h"
-#include "raymath.h"
-#include "animal.cpp"
-#include "prey.cpp"
-#include <algorithm>
-#include <vector>
+#include "predator.h"
 
-class Predator : public Animal
+Predator::Predator()
 {
-private:
-    void eat()
-    {
-        age -= 25;
-        ++foodEaten;
-        hunger -= 100;
+    position = randomHole();
+    velocity = {RandomNumberGenerator(-1, 1), RandomNumberGenerator(-1, 1)}; // random velocity when born
+    maxAge = 150;
+    colour = RED;
+    size = 3;
+    maxSpeed = 3;
+    hunger = 40;
+    maxHunger = 100;
+    hungry = false;
+}
 
-        if (foodEaten >= 10)
-        {
-            createNewAnimal = true;
-            foodEaten = 0;
-        }
+void Predator::eat()
+{
+    ++foodEaten;
+    maxSpeed = 3;
+    hunger -= 50;
+    if (hunger <= 0)
+    {
+        hungry = false;
+        hunger = 0;
     }
 
-public:
-    Predator()
+    if (foodEaten == 2)
     {
-        maxAge = 100;
-        colour = RED;
-        size = 6;
-        maxVelocity = 5;
-        position = {300, 50};
-        hunger = 50;
+        foodEaten = 0;
+        createNewAnimal = true;
     }
-
-    void move(std::vector<Prey> &allPrey)
+    if (children == 2)
     {
-        if (hungry())
-        {
-            seekFood(allPrey);
-        }
-        else 
-        {
-            
-        }
+        death();
     }
+}
 
-    void seekFood(std::vector<Prey> &allPrey)
+void Predator::decreaseMaxHunger()
+{
+    // if prey population  > 10* predator population then
+    maxHunger = 50;
+}
+void Predator::increaseMaxHunger()
+{
+    // if prey population < predator population then
+    maxHunger = 200;
+}
+void Predator::normalMaxHunger()
+{
+    // if none of the above then
+    maxHunger = 100;
+}
+
+Vector2 Predator::randomHole()
+{
+    switch (GetRandomValue(0, 3))
     {
-        if (allPrey.size() > 0 && alive && hungry())
-        {
-            std::vector<float> distances;
-            Vector2 pos = getPos();
-
-            std::for_each(allPrey.begin(), allPrey.end(), [&pos, &distances](Prey &p)
-                          { float d = Vector2Distance(pos, p.getPos());
-                        distances.push_back(d); });
-
-            std::vector<float>::iterator result = std::min_element(std::begin(distances), std::end(distances));
-
-            Prey &prey = allPrey.at(std::distance(distances.begin(), result));
-
-            Vector2 target = prey.getPos();
-
-            Vector2 desiredVelocity =
-                Vector2Scale(
-                    Vector2Normalize(
-                        Vector2Subtract(target, position)),
-                    maxVelocity);
-
-            Vector2 steering = Vector2Subtract(desiredVelocity, velocity);
-
-            steering.x = trunc(steering.x);
-            steering.y = trunc(steering.y);
-
-            velocity.x = trunc(velocity.x + steering.x);
-            velocity.y = trunc(velocity.y + steering.y);
-
-            position = Vector2Add(position, velocity);
-
-            if (Vector2Distance(position, target) < 10)
-            {
-                eat();
-                prey.death();
-            }
-        }
+    case 0:
+        return {300, 50}; // top left
+    case 1:
+        return {300, 800}; // bottom left
+    case 2:
+        return {1400, 800}; // bottom right
+    case 3:
+        return {1400, 50}; // top right
     }
-};
+}
+
+void Predator::move(std::vector<Predator> const &neighbors) // not hungry or no prey
+{
+    acceleration = {0, 0};
+    separate(neighbors);
+    wander();
+    updatePosition();
+}
+
+void Predator::move(Vector2 const &nearestPreyPos, Vector2 const nearestPreyVel, std::vector<Predator> const &neighbors) // hungry
+{
+    // updatePosition();
+    acceleration = {0, 0};
+    separate(neighbors);
+    pursuit(nearestPreyPos, nearestPreyVel);
+    updatePosition();
+}
+
+void Predator::pursuit(Vector2 const &targetPosition, Vector2 const &targetVelocity)
+{
+    Vector2 prediction = Vector2Scale(targetVelocity, 3);
+    Vector2 futurePos = Vector2Add(targetPosition, prediction);
+
+    seek(futurePos);
+
+    if (maxSpeed != 3.2)
+    {
+        maxSpeed += 0.01;
+    }
+}
+
+void Predator::separate(std::vector<Predator> const &neigbours)
+{
+    if (neigbours.size() > 0)
+    {
+        Vector2 sum = {0, 0};
+
+        for (Predator n : neigbours) // stl was being weird...
+        {
+            sum = Vector2Add(sum, n.getPos());
+        }
+
+        sum.x = sum.x / neigbours.size();
+        sum.y = sum.y / neigbours.size();
+
+        Vector2 steering = Vector2Subtract(position, sum);
+        steering = limitForce(steering);
+        acceleration = Vector2Add(steer(steering), acceleration);
+    }
+}
+
+void Predator::draw()
+{
+    adjustPosition();
+    if (alive)
+    {
+        increaseAge();
+        updateHunger();
+        DrawCircleV(position, size, colour);
+    }
+}

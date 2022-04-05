@@ -378,6 +378,7 @@ PROJECT_SOURCE_FILES ?= \
     prey.cpp \
     predator.cpp \
     food.cpp \
+    environment.cpp \
 
 # Define all object files from source files
 OBJS = $(patsubst %.c, %.o, $(PROJECT_SOURCE_FILES))

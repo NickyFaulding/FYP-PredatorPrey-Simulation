@@ -1,104 +1,192 @@
-#include "raylib.h"
-#include "raymath.h"
+#include "animal.h"
+#include "id.cpp"
 
-#pragma once
-
-class Animal
+void Animal::increaseAge()
 {
-protected:
-    Vector2 position;
-    Vector2 velocity = {0, 0};
-    double maxVelocity;
+    age += 0.2;
 
-    double size;
-    Color colour;
+    // if (hungry)
+    // {
+    //     age += 0.2;
+    // }
 
-    int age;
-    int maxAge;
-    int foodEaten;
-    bool alive;
-    int hunger;
-
-    bool createNewAnimal;
-
-    void increaseAge()
+    if (age >= maxAge)
     {
-        if (hungry())
-        {
-            ++age;
-        }
+        death();
+    }
+}
 
-        if (age == maxAge)
-        {
-            death();
-        }
+void Animal::updateHunger()
+{
+    if (hunger >= maxHunger)
+    {
+        hungry = true;
+    }
+    else if (hunger <= 0)
+    {
+        hungry = false;
     }
 
-    bool hungry()
+    ++hunger;
+}
+
+void Animal::seek(Vector2 target)
+{
+    Vector2 desiredVelocity =
+        Vector2Scale(
+            Vector2Normalize(
+                Vector2Subtract(target, position)),
+            maxSpeed);
+
+    Vector2 steering = steer(desiredVelocity);
+    acceleration = Vector2Add(steer(steering), acceleration);
+}
+
+Vector2 Animal::steer(Vector2 desired)
+{
+    return Vector2Subtract(desired, velocity);
+}
+
+Vector2 Animal::limitForce(Vector2 steeringForce)
+{
+    if (Vector2Length(steeringForce) > maxForce)
     {
-        return (hunger == 100);
+        steeringForce = Vector2Normalize(Vector2Scale(steeringForce, maxForce));
     }
+    return steeringForce;
+}
 
-    void increaseHunger()
+void Animal::wander() // perfect!
+{
+    Vector2 wanderPoint = velocity;
+    wanderPoint = Vector2Normalize(wanderPoint);
+    wanderPoint = Vector2Scale(wanderPoint, 65);
+    wanderPoint = Vector2Add(wanderPoint, position);
+
+    float wanderRadius = 25;
+
+    float theta = wanderTheta + atan2f(position.x, position.y);
+
+    float x = wanderRadius * cos(theta);
+    float y = wanderRadius * sin(theta);
+    wanderPoint.x += x;
+    wanderPoint.y += y;
+
+    Vector2 steering = Vector2Subtract(wanderPoint, position);
+    steering = limitForce(steering);
+
+    acceleration = Vector2Add(steer(steering), acceleration);
+
+    float displacementRange = 0.2;
+    wanderTheta += RandomNumberGenerator(-displacementRange, displacementRange);
+}
+
+void Animal::adjustPosition()
+{
+    if (position.x < 0)
     {
-        if (!hungry())
-        {
-            hunger++;
-        }
+        position.x = 1600;
     }
-
-    virtual void eat() = 0;
-
-public:
-    bool operator==(const Animal &other) const
+    if (position.y < 0)
     {
-        return position.x == other.position.x && position.y == other.position.y; // comparing positions
+        position.y = 900;
     }
-
-    Animal()
+    if (position.x > 1600)
     {
-        age = 0;
-        alive = true;
-        foodEaten = 0;
-        createNewAnimal = false;
+        position.x = 0;
     }
-
-    virtual ~Animal() = default;
-
-    virtual void move() {}
-
-    bool getCreateNewAnimal()
+    if (position.y > 900)
     {
-        return createNewAnimal;
+        position.y = 0;
     }
+}
 
-    void newAnimalCreated()
-    {
-        createNewAnimal = false;
-    }
+void Animal::updatePosition()
+{
+    acceleration = limitForce(acceleration);
+    // update velocity
+    velocity = Vector2Add(velocity, acceleration);
+    // update position
+    position = Vector2Add(position, velocity);
+    // reset acceleration
+    acceleration = Vector2Zero();
+}
 
-    Vector2 getPos()
-    {
-        return position;
-    }
+bool Animal::operator==(const Animal &other) const
+{
+    return id == other.id;
+}
 
-    void death()
-    {
-        alive = false;
-    }
+Animal::Animal()
+{
+    ID _id;
+    id = _id.id;
 
-    bool isDead()
-    {
-        return !alive;
-    }
+    mass = 1;
+    maxForce = 1;
+    wanderTheta = 0;
+    age = 0;
+    alive = true;
+    hungry = false;
+    foodEaten = 0;
+    children = 0;
+    createNewAnimal = false;
+    acceleration = Vector2Zero();
+}
 
-    void draw()
+bool Animal::isHungry() const
+{
+    return hungry;
+}
+
+bool Animal::getCreateNewAnimal()
+{
+    return createNewAnimal;
+}
+
+void Animal::newAnimalCreated()
+{
+    ++children;
+    createNewAnimal = false;
+}
+
+int Animal::getChildren() const
+{
+    return children;
+}
+
+Vector2 Animal::getVel() const
+{
+    return velocity;
+}
+
+int Animal::getSpeed() const
+{
+    return maxSpeed;
+}
+
+Vector2 const Animal::getPos() const
+{
+    return position;
+}
+
+void Animal::death()
+{
+    alive = false;
+}
+
+bool Animal::isAlive() const
+{
+    return alive;
+}
+
+void Animal::draw()
+{
+    adjustPosition();
+    if (alive)
     {
-        if (alive)
-        {
-            increaseAge();
-            increaseHunger();
-            DrawCircleV(position, size, colour);
-        }
+        // increaseAge();
+        updateHunger();
+        DrawCircleV(position, size, colour);
     }
-};
+}

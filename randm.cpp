@@ -5,8 +5,8 @@
 
 static std::mt19937 random_number_engine(time(0));
 
-static int RandomNumberGenerator(int min, int max)
+static float RandomNumberGenerator(float min, float max)
 {
-    std::uniform_int_distribution<int> distribution(min, max);
+    std::uniform_real_distribution<float> distribution(min, max);
     return distribution(random_number_engine);
 }

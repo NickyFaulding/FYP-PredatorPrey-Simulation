@@ -1,82 +1,62 @@
-#include "raylib.h"
-#include "randm.cpp"
-#include <stdlib.h>
-#include <time.h>
+#include "food.h"
 
-#pragma once
-
-class Food
+Food::Food()
 {
-private:
-    Vector2 upperBounds = {880, 640};
-    Vector2 lowerBounds = {235, 5};
+    randomLocation();
+    eaten = false;
+    spoiled = false;
+    age = 0;
+    maxAge = 350;
+    size = 1;
+    colour = ORANGE;
+}
 
-    int size = 3;
-    Color colour = ORANGE;
+bool Food::operator==(const Food &other) const
+{
+    return position.x == other.position.x && position.y == other.position.y; // comparing positions
+}
 
-    bool eaten;
-    bool spoiled;
+void Food::randomLocation()
+{
+    position.x = RandomNumberGenerator(lowerBounds.x, upperBounds.x);
+    position.y = RandomNumberGenerator(lowerBounds.y, upperBounds.y);
+}
 
-    int age;
-    int maxAge = 350;
-    Vector2 position;
+void const Food::setEaten()
+{
+    eaten = true;
+}
 
-    void randomLocation()
+void Food::increaseAge()
+{
+    ++age;
+
+    if (age >= maxAge)
     {
-        position.x = RandomNumberGenerator(lowerBounds.x, upperBounds.x);
-        position.y = RandomNumberGenerator(lowerBounds.y, upperBounds.y);
+        spoiled = true;
     }
+}
 
-public:
-    bool operator==(const Food &other) const
+bool Food::isEaten()
+{
+    if (eaten || spoiled)
     {
-        return position.x == other.position.x && position.y == other.position.y; // comparing positions
+        return true;
     }
+    else
+        return false;
+}
 
-    Food()
+Vector2 Food::getPos() const
+{
+    return position;
+}
+
+void Food::draw()
+{
+    if (!eaten && !spoiled)
     {
-        randomLocation();
-        eaten = false;
-        spoiled = false;
-        age = 0;
+        increaseAge();
+        DrawCircleV(position, size, colour);
     }
-
-    void setEaten()
-    {
-        eaten = true;
-    }
-
-    void increaseAge()
-    {
-        ++age;
-
-        if (age >= maxAge)
-        {
-            spoiled = true;
-        }
-    }
-
-    bool isEaten()
-    {
-        if (eaten || spoiled)
-        {
-            return true;
-        }
-        else
-            return false;
-    }
-
-    Vector2 getPos()
-    {
-        return position;
-    }
-
-    void draw()
-    {
-        if (!eaten && !spoiled)
-        {
-            increaseAge();
-            DrawCircleV(position, size, colour);
-        }
-    }
-};
+}

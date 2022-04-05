@@ -4,6 +4,7 @@
             "name": "Win32",
             "includePath": [
                 "C:/raylib/raylib/src/**",
+                "C:/emsdk/upstream/emscripten/cache/sysroot/include",
                 "${workspaceFolder}/**"
             ],
             "defines": [
