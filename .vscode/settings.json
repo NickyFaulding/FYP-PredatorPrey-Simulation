@@ -1,4 +1,5 @@
 {
+<<<<<<< HEAD
   "files.exclude": {
     "**/.git": true,
     "**/.svn": true,
@@ -63,3 +64,18 @@
     "map": "cpp"
   }
 }
+=======
+	"files.exclude": {
+		"**/.git": true,
+		"**/.svn": true,
+		"**/.hg": true,
+		"**/CVS": true,
+		"**/.DS_Store": true,
+		"**/*.o": true,
+		"**/*.exe": true,
+	},
+	"files.associations": {
+		"raylib.h": "c"
+	}
+}
+>>>>>>> e139c09dc6b0c2f82117a950e50a27cd40f05eec

@@ -73,6 +73,7 @@ int main()
 //----------------------------------------------------------------------------------
 void UpdateDrawFrame(void)
 {
+<<<<<<< HEAD
     switch (currentScreen)
     {
     case INITIAL:
