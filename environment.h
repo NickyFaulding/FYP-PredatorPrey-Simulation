@@ -21,9 +21,12 @@ private:
     int predatorLimit;
     int foodLimit;
 
+    int predatorBirthRate;
+    int predatorMaxChildren;
+
     bool ratioed;
 
-    float timePassed;
+    float timePassed = 0;
 
     const int SIZE = 20;
     const int cellSize = 32;
@@ -37,7 +40,7 @@ private:
 
 public:
     Environment();
-    Environment(int preyCount, int predatorCount, int foodCount, int foodLimit, int preyLimit, int predatorLimit); // allow creating an environment without changing the class.
+    Environment(int preyCount, int predatorCount, int foodCount, int foodLimit, int preyLimit, int predatorLimit, int predatorBirthRate, int predatorMaxChildren); // allow creating an environment without changing the class.
 
     void addFood();
     void addFood(int n);

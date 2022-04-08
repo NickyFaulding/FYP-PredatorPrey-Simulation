@@ -32,6 +32,9 @@ int predatorLimit;
 int preyLimit;
 int foodLimit;
 
+int predatorBirthRate;
+int predatorMaxChildren;
+
 bool dividebyfour;
 bool disablePreyLimit;
 bool disablePredatorLimit;
@@ -62,6 +65,9 @@ int main()
     predatorLimit = 0;
     preyLimit = 0;
     foodLimit = 0;
+
+    predatorBirthRate = 1;
+    predatorMaxChildren = 1;
 
     dividebyfour = false;
     disablePreyLimit = false;
@@ -101,7 +107,9 @@ void UpdateDrawFrame(void)
             preyLimit = GuiSlider((Rectangle){1000, 430, 200, 40}, "PREY LIMIT", TextFormat("%2.2f", (float)preyLimit), preyLimit, preyCount, 500);
         }
 
-        foodLimit = GuiSlider((Rectangle){1000, 480, 200, 40}, "FOOD LIMIT", TextFormat("%2.2f", (float)foodLimit), foodLimit, foodCount, 500);
+        // foodLimit = GuiSlider((Rectangle){1000, 480, 200, 40}, "FOOD LIMIT", TextFormat("%2.2f", (float)foodLimit), foodLimit, foodCount, 500);
+        predatorBirthRate = GuiSlider((Rectangle){1000, 480, 200, 40}, "PREDATOR BIRTHRATE", TextFormat("%02i", predatorBirthRate), predatorBirthRate, 1, 10);
+        predatorMaxChildren = GuiSlider((Rectangle){1000, 530, 200, 40}, "PREDATOR MAX CHILDREN", TextFormat("%02i", predatorMaxChildren), predatorMaxChildren, 0, 15);
 
         if (dividebyfour)
         {
@@ -118,11 +126,11 @@ void UpdateDrawFrame(void)
 
         predatorCount = GuiSlider((Rectangle){355, 380, 200, 40}, "STARTING PREDATORS", TextFormat("%2.2f", (float)predatorCount), predatorCount, 0, 100);
         preyCount = GuiSlider((Rectangle){355, 430, 200, 40}, "STARTING PREY", TextFormat("%2.2f", (float)preyCount), preyCount, 0, 500);
-        // foodCount = GuiSlider((Rectangle){355, 480, 200, 40}, "FOOD COUNT", TextFormat("%2.2f", (float)foodCount), foodCount, 0, 500);
+        foodLimit = GuiSlider((Rectangle){355, 480, 200, 40}, "FOOD COUNT", TextFormat("%2.2f", (float)foodLimit), foodLimit, foodCount, 500);
 
         if (GuiButton((Rectangle){355, 550, 200, 40}, "START SIMULATION"))
         {
-            environment = new Environment(preyCount, predatorCount, foodCount, foodLimit, preyLimit, predatorLimit);
+            environment = new Environment(preyCount, predatorCount, foodCount, foodLimit, preyLimit, predatorLimit, predatorBirthRate, predatorMaxChildren);
             currentScreen = SIMULATION;
         }
 

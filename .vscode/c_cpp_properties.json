@@ -4,10 +4,7 @@
             "name": "Win32",
             "includePath": [
                 "C:/raylib/raylib/src/**",
-<<<<<<< HEAD
                 "C:/emsdk/upstream/emscripten/cache/sysroot/include",
-=======
->>>>>>> e139c09dc6b0c2f82117a950e50a27cd40f05eec
                 "${workspaceFolder}/**"
             ],
             "defines": [
@@ -25,11 +22,7 @@
         {
             "name": "Mac",
             "includePath": [
-<<<<<<< HEAD
-                "C:/raylib/raylib/src/**",
-=======
                 "<path_to_raylib>/src/**",
->>>>>>> e139c09dc6b0c2f82117a950e50a27cd40f05eec
                 "${workspaceFolder}/**"
             ],
             "defines": [

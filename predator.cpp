@@ -1,15 +1,15 @@
 #include "predator.h"
 
-Predator::Predator()
+Predator::Predator(int birthRate, int maxChildren) : maxChildren(maxChildren), birthRate(birthRate)
 {
     position = randomHole();
     velocity = {RandomNumberGenerator(-1, 1), RandomNumberGenerator(-1, 1)}; // random velocity when born
     maxAge = 150;
-    age = (RandomNumberGenerator(0, 25));
+    age = (RandomNumberGenerator(1, 25));
     colour = RED;
     size = 3;
     maxSpeed = 3;
-    hunger = 40;
+    hunger = 60;
     maxHunger = 100;
     hungry = false;
 }
@@ -18,33 +18,34 @@ void Predator::eat()
 {
     ++foodEaten;
     maxSpeed = 3;
-    hunger -= 50;
-    if (hunger <= 0)
-    {
-        hungry = false;
-        hunger = 0;
-    }
 
-    if (foodEaten == 2)
+    if (hungry)
+    {
+        hunger -= 50;
+    }
+    // maybe consider the size of prey eaten.
+
+    if (foodEaten == birthRate)
     {
         foodEaten = 0;
         createNewAnimal = true;
-    }
-    if (children == 2)
-    {
-        death();
+
+        if (GetRandomValue((maxChildren - children), maxChildren) <= 0) // more likely to die after having max children.
+        {
+            death();
+        }
     }
 }
 
 void Predator::decreaseMaxHunger()
 {
-    // if prey population  > 10* predator population then
-    maxHunger = 50;
+    // if prey population  > predator population then
+    maxHunger = 400;
 }
 void Predator::increaseMaxHunger()
 {
     // if prey population < predator population then
-    maxHunger = 200;
+    maxHunger = 50;
 }
 void Predator::normalMaxHunger()
 {

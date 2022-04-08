@@ -3,12 +3,15 @@
 
 void Animal::increaseAge()
 {
-    age += 0.2;
 
-    // if (hungry)
-    // {
-    //     age += 0.2;
-    // }
+    if (hungry)
+    {
+        age += (hunger * 0.0025);
+    }
+    else
+    {
+        age += 0.025;
+    }
 
     if (age >= maxAge)
     {
@@ -18,16 +21,21 @@ void Animal::increaseAge()
 
 void Animal::updateHunger()
 {
-    if (hunger >= maxHunger)
+    if (hunger >= (maxHunger * 0.6))
     {
         hungry = true;
     }
-    else if (hunger <= 0)
+    else
     {
+        ++hunger;
         hungry = false;
     }
 
-    ++hunger;
+}
+
+int Animal::getHunger()
+{
+    return hunger;
 }
 
 void Animal::seek(Vector2 target)
@@ -125,7 +133,7 @@ Animal::Animal()
     mass = 1;
     maxForce = 1;
     wanderTheta = 0;
-    age = 0;
+    age = 1;
     alive = true;
     hungry = false;
     foodEaten = 0;

@@ -17,12 +17,16 @@ Environment::Environment(
     int foodCount,
     int foodLimit,
     int preyLimit,
-    int predatorLimit) : preyCount(preyCount),
-                         foodCount(foodCount),
-                         foodLimit(foodLimit),
-                         preyLimit(preyLimit),
-                         predatorLimit(predatorLimit),
-                         predatorCount(predatorCount)
+    int predatorLimit,
+    int predatorBirthRate,
+    int predatorMaxChildren) : preyCount(preyCount),
+                               foodCount(foodCount),
+                               foodLimit(foodLimit),
+                               preyLimit(preyLimit),
+                               predatorLimit(predatorLimit),
+                               predatorCount(predatorCount),
+                               predatorBirthRate(predatorBirthRate),
+                               predatorMaxChildren(predatorMaxChildren)
 {
     addPrey(preyCount);
     addPredator(predatorCount);
@@ -166,9 +170,15 @@ struct UpdatePrey // functor
 
 struct UpdatePredator // functor
 {
-    UpdatePredator(std::vector<Prey> &allPrey, std::vector<Predator> &predators, int predatorLimit) : allPrey(allPrey), predators(predators), predatorLimit(predatorLimit)
-    {
-    }
+    UpdatePredator(std::vector<Prey> &allPrey,
+                   std::vector<Predator> &predators,
+                   int predatorLimit,
+                   int predatorBirthRate,
+                   int predatorMaxChildren) : allPrey(allPrey),
+                                              predators(predators),
+                                              predatorLimit(predatorLimit),
+                                              predatorBirthRate(predatorBirthRate),
+                                              predatorMaxChildren(predatorMaxChildren) {}
 
     void operator()(Predator &p)
     {
@@ -220,14 +230,17 @@ struct UpdatePredator // functor
 
     void decideHungerLevels(Predator &p)
     {
-        if (allPrey.size() > 5 * (predators.size()))
+        // if prey heavily over populated
+        if (allPrey.size() > (4 * (predators.size())))
         {
             p.increaseMaxHunger();
         }
+        // if predators over populated
         else if (allPrey.size() < predators.size())
         {
             p.decreaseMaxHunger();
         }
+        // if balanced
         else
         {
             p.normalMaxHunger();
@@ -252,7 +265,7 @@ struct UpdatePredator // functor
     {
         for (int i = 0; i < n; ++i)
         {
-            predators.push_back(Predator());
+            predators.push_back(Predator(predatorBirthRate, predatorMaxChildren));
         }
     }
 
@@ -270,12 +283,15 @@ struct UpdatePredator // functor
     std::vector<Predator> &predators;
     int predatorLimit;
     bool ratioed = false;
+
+    int predatorBirthRate;
+    int predatorMaxChildren;
 };
 
 void Environment::update()
 {
     // using member pointers here
-    std::for_each(predators.begin(), predators.end(), UpdatePredator(allPrey, predators, predatorLimit));
+    std::for_each(predators.begin(), predators.end(), UpdatePredator(allPrey, predators, predatorLimit, predatorBirthRate, predatorMaxChildren));
     std::for_each(allPrey.begin(), allPrey.end(), UpdatePrey(predators, allFood, allPrey, preyLimit));
 
     if ((getTimePassed() % 100) == 0) // limit amount we push to the vector.
@@ -307,7 +323,7 @@ void Environment::addPrey(int n)
 
 void Environment::addPredator()
 {
-    predators.push_back(Predator());
+    predators.push_back(Predator(predatorBirthRate, predatorMaxChildren));
 }
 
 void Environment::addPredator(int n)
@@ -423,6 +439,7 @@ void Environment::drawDebugData()
     DrawText(TextFormat("FOOD: %03i", allFood.size()), 50, 580, 15, WHITE);
     DrawText(TextFormat("Hours Passed: %04i", getTimePassed()), 50, 600, 15, WHITE);
 
+    DrawText(TextFormat("hungry : %03i", predators.at(1).getHunger()), 50, 25, 15, WHITE);
     // DrawText(TextFormat("MOUSE X: %03i", GetMouseX()), 50, 25, 15, WHITE);
     // DrawText(TextFormat("MOUSE Y: %03i", GetMouseY()), 50, 45, 15, WHITE);
 }

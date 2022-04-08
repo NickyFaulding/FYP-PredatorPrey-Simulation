@@ -22,7 +22,6 @@ protected:
     double size;
     Color colour;
 
-    float age;
     int maxAge;
     int foodEaten;
     int children;
@@ -42,6 +41,8 @@ protected:
     Vector2 limitForce(Vector2 steeringForce);
 
 public:
+    float age;
+
     bool operator==(const Animal &other) const;
     Animal();
     virtual ~Animal() = default;
@@ -52,6 +53,7 @@ public:
     void wander();
     bool isAlive() const;
     bool isHungry() const;
+    int getHunger();
     Vector2 const getPos() const;
     Vector2 getVel() const;
     int getSpeed() const;
