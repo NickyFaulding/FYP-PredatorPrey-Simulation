@@ -31,11 +31,6 @@ Environment::Environment(
     addPrey(preyCount);
     addPredator(predatorCount);
     addFood(foodCount);
-
-    if (predatorLimit == 444)
-    {
-        ratioed = true;
-    }
 }
 
 struct UpdatePrey // functor
@@ -439,7 +434,7 @@ void Environment::drawDebugData()
     DrawText(TextFormat("FOOD: %03i", allFood.size()), 50, 580, 15, WHITE);
     DrawText(TextFormat("Hours Passed: %04i", getTimePassed()), 50, 600, 15, WHITE);
 
-    DrawText(TextFormat("hungry : %03i", predators.at(1).getHunger()), 50, 25, 15, WHITE);
+    //DrawText(TextFormat("hungry : %03i", predators.at(1).getHunger()), 50, 25, 15, WHITE);
     // DrawText(TextFormat("MOUSE X: %03i", GetMouseX()), 50, 25, 15, WHITE);
     // DrawText(TextFormat("MOUSE Y: %03i", GetMouseY()), 50, 45, 15, WHITE);
 }
