@@ -40,7 +40,7 @@ void Predator::eat()
 void Predator::decreaseMaxHunger()
 {
     // if prey population  > predator population then
-    maxHunger = 400;
+    maxHunger = 300;
 }
 void Predator::increaseMaxHunger()
 {
