@@ -36,8 +36,9 @@ int predatorBirthRate;
 int predatorMaxChildren;
 
 bool dividebyfour;
-bool disablePreyLimit;
-bool disablePredatorLimit;
+bool testCase1;
+bool enablePreyLimit;
+bool enablePredatorLimit;
 
 std::vector<std::string> gPredatorData;
 std::vector<std::string> gPreyData;
@@ -69,9 +70,10 @@ int main()
     predatorBirthRate = 1;
     predatorMaxChildren = 1;
 
-    dividebyfour = false;
-    disablePreyLimit = false;
-    disablePredatorLimit = false;
+    // dividebyfour = false;
+    testCase1 = false;
+    enablePreyLimit = false;
+    enablePredatorLimit = false;
 
     // EM_ASM(
     //     saveFileFromMEMFSToDisk()
@@ -94,15 +96,16 @@ void UpdateDrawFrame(void)
     case INITIAL:
         BeginDrawing();
 
-        dividebyfour = GuiCheckBox((Rectangle){1000, 260, 30, 30}, "RATIO PREDATOR PREY 1:4!", dividebyfour);
-        disablePredatorLimit = GuiCheckBox((Rectangle){1000, 300, 30, 30}, "NO PREDATOR LIMIT", disablePredatorLimit);
-        disablePreyLimit = GuiCheckBox((Rectangle){1000, 340, 30, 30}, "NO PREY LIMIT", disablePreyLimit);
+        // dividebyfour = GuiCheckBox((Rectangle){1000, 260, 30, 30}, "RATIO PREDATOR PREY 1:4!", dividebyfour);
+        testCase1 = GuiCheckBox((Rectangle){1000, 260, 30, 30}, "Select Test1 Values", testCase1);
+        enablePredatorLimit = GuiCheckBox((Rectangle){1000, 300, 30, 30}, "PREDATOR LIMIT", enablePredatorLimit);
+        enablePreyLimit = GuiCheckBox((Rectangle){1000, 340, 30, 30}, "PREY LIMIT", enablePreyLimit);
 
-        if (!disablePredatorLimit)
+        if (enablePredatorLimit)
         {
             predatorLimit = GuiSlider((Rectangle){1000, 380, 200, 40}, "PREDATOR LIMIT", TextFormat("%2.2f", (float)predatorLimit), predatorLimit, predatorCount, 200);
         }
-        if (!disablePreyLimit)
+        if (enablePreyLimit)
         {
             preyLimit = GuiSlider((Rectangle){1000, 430, 200, 40}, "PREY LIMIT", TextFormat("%2.2f", (float)preyLimit), preyLimit, preyCount, 500);
         }
@@ -115,11 +118,19 @@ void UpdateDrawFrame(void)
         {
             predatorLimit = preyLimit / 4;
         }
-        if (disablePreyLimit)
+        if (testCase1)
+        {
+            predatorCount = 25;
+            preyCount = 150;
+            foodLimit = 150;
+            predatorBirthRate = 2;
+            predatorMaxChildren = 2;
+        }
+        if (!enablePreyLimit)
         {
             preyLimit = 999;
         }
-        if (disablePredatorLimit)
+        if (!enablePredatorLimit)
         {
             predatorLimit = 999;
         }
