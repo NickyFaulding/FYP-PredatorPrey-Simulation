@@ -33,7 +33,7 @@ PROJECT_NAME          ?= raylib_game
 PROJECT_VERSION       ?= 1.0
 PROJECT_BUILD_PATH    ?= .
 
-RAYLIB_PATH           ?= ../../../
+RAYLIB_PATH           ?= ../../
 
 # Locations of raylib.h and libraylib.a/libraylib.so
 # NOTE: Those variables are only used for PLATFORM_OS: LINUX, BSD
@@ -180,7 +180,7 @@ endif
 
 # Define compiler flags: CFLAGS
 #------------------------------------------------------------------------------------------------
-#  -O1                  defines optimization level test
+#  -O1                  defines optimization level
 #  -g                   include debug information on compilation
 #  -s                   strip unnecessary data from build
 #  -Wall                turns on most, but not all, compiler warnings
@@ -374,11 +374,11 @@ endif
 #------------------------------------------------------------------------------------------------
 PROJECT_SOURCE_FILES ?= \
     raylib_game.cpp \
-    animal.cpp \
-    prey.cpp \
-    predator.cpp \
-    food.cpp \
-    environment.cpp \
+    implementation\objects\animal.cpp \
+    implementation\objects\prey.cpp \
+    implementation\objects\predator.cpp \
+    implementation\objects\food.cpp \
+    implementation\objects\environment.cpp \
 
 # Define all object files from source files
 OBJS = $(patsubst %.c, %.o, $(PROJECT_SOURCE_FILES))

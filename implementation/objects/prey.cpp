@@ -1,4 +1,4 @@
-#include "prey.h"
+#include "header\prey.h"
 
 Prey::Prey()
 {
@@ -54,27 +54,27 @@ void Prey::eat()
     }
 }
 
-void Prey::move(std::vector<Prey> const &neigbours) // no food or predators...
+void Prey::move(std::vector<Prey> const &neighbours) // no food or predators...
 {
     acceleration = {0, 0};
-    separate(neigbours);
+    separate(neighbours);
     wander();
     updatePosition();
 }
 
-void Prey::move(Vector2 const &nearestFoodPos, std::vector<Prey> const &neigbours) // only food...
+void Prey::move(Vector2 const &nearestFoodPos, std::vector<Prey> const &neighbours) // only food...
 {
     acceleration = {0, 0};
-    separate(neigbours);
+    separate(neighbours);
     seek(nearestFoodPos);
     updatePosition();
 }
 
-void Prey::move(Vector2 const &nearestPredatorPos, Vector2 const &nearestPredatorVel, std::vector<Prey> const &neigbours) // no food
+void Prey::move(Vector2 const &nearestPredatorPos, Vector2 const &nearestPredatorVel, std::vector<Prey> const &neighbours) // no food
 {
     acceleration = {0, 0};
 
-    separate(neigbours);
+    separate(neighbours);
 
     if (Vector2Distance(position, nearestPredatorPos) <= 15)
     {
@@ -88,13 +88,13 @@ void Prey::move(Vector2 const &nearestPredatorPos, Vector2 const &nearestPredato
     updatePosition();
 }
 
-void Prey::move(Vector2 const &nearestFoodPos, Vector2 const &nearestPredatorPos, Vector2 const &nearestPredatorVel, std::vector<Prey> const &neigbours) // food and predators
+void Prey::move(Vector2 const &nearestFoodPos, Vector2 const &nearestPredatorPos, Vector2 const &nearestPredatorVel, std::vector<Prey> const &neighbours) // food and predators
 {
     // seek nearest food but avoid predators.
 
     acceleration = {0, 0};
 
-    separate(neigbours);
+    separate(neighbours);
 
     if (Vector2Distance(position, nearestPredatorPos) <= 15)
     {
@@ -107,15 +107,6 @@ void Prey::move(Vector2 const &nearestFoodPos, Vector2 const &nearestPredatorPos
     updatePosition();
 }
 
-// void const Prey::evade(Vector2 const &predatorPos)
-// {
-//     Vector2 target = predatorPos;
-//     target = Vector2Subtract(target, position);
-//     target = Vector2Scale(target, -1);
-
-//     seek(target);
-// }
-
 void const Prey::evade(Vector2 const &targetPosition, Vector2 const &targetVelocity)
 {
     Vector2 prediction = Vector2Scale(targetVelocity, 2);
@@ -124,26 +115,21 @@ void const Prey::evade(Vector2 const &targetPosition, Vector2 const &targetVeloc
     futurePos = Vector2Scale(futurePos, -1);
 
     seek(futurePos);
-
-    // if (maxSpeed != 3.2)
-    // {
-    //     maxSpeed += 0.01;
-    // }
 }
 
-void Prey::separate(std::vector<Prey> const &neigbours)
+void Prey::separate(std::vector<Prey> const &neighbours)
 {
-    if (neigbours.size() > 0)
+    if (neighbours.size() > 0)
     {
         Vector2 sum = {0, 0};
 
-        for (Prey n : neigbours) // stl was being weird...
+        for (Prey n : neighbours) // stl was being weird...
         {
             sum = Vector2Add(sum, n.getPos());
         }
 
-        sum.x = sum.x / neigbours.size();
-        sum.y = sum.y / neigbours.size();
+        sum.x = sum.x / neighbours.size();
+        sum.y = sum.y / neighbours.size();
 
         Vector2 steering = Vector2Subtract(position, sum);
         steering = limitForce(steering);

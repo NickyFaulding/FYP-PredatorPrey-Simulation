@@ -14,7 +14,7 @@ private:
     int maxChildren;
 
     Vector2 randomHole();
-    void separate(std::vector<Predator> const &neigbours);
+    void separate(std::vector<Predator> const &neighbours);
     void pursuit(Vector2 const &target, Vector2 const &targetVelocity);
 
 public:

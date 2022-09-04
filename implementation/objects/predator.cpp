@@ -1,4 +1,4 @@
-#include "predator.h"
+#include "header\predator.h"
 
 Predator::Predator(int birthRate, int maxChildren) : maxChildren(maxChildren), birthRate(birthRate)
 {
