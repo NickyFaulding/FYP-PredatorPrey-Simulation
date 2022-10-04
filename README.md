@@ -1,6 +1,6 @@
 # FYP Predator-Prey Simulation 🦊🐰
 
-## Final year project for Software Engineering Degree  @ Sheffield Hallam University
+## Final year project for Software Engineering  @ Sheffield Hallam University
 
 Implements Craig W. Reynolds Steering Behaviors For Autonomous Characters to simulate an environment containing predators and prey.
 
